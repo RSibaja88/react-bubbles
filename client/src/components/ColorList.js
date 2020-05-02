@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosWithAuth from './axiosWithAuth';
+import { useHistory } from 'react-router-dom';
 
 const initialColor = {
   color: "",
@@ -10,6 +11,13 @@ const ColorList = ({ colors, updateColors }) => {
   console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+  const [newColor, setNewColor] = useState({
+    color: "",
+    code: { hex: "" }
+  })
+
+  const history = useHistory();
+
 
   const editColor = color => {
     setEditing(true);
@@ -18,14 +26,63 @@ const ColorList = ({ colors, updateColors }) => {
 
   const saveEdit = e => {
     e.preventDefault();
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+    axiosWithAuth().put(`/api/colors/${colorToEdit.id}`, colorToEdit)
+    .then(res => {
+    axiosWithAuth().get('/api/colors')
+    .then(res => {
+      updateColors(res.data)
+    })
+    .catch(err => console.log('inner error', err))
+    history.push('/bubble-page')
+    })
+    .catch(err => {
+      console.log('outer error', err)
+    })
+
   };
 
   const deleteColor = color => {
-    // make a delete request to delete this color
+   axiosWithAuth().delete(`/api/colors/${color.id}`, color)
+   .then(res => {
+     axiosWithAuth().get('/api/colors')
+     .then(res => {
+       updateColors(res.data)
+     })
+     .catch(err => console.log('inner error', err))
+    history.push('/bubble-page')
+   })
+   .catch(err => {
+    console.log('outer error', err)
+   })
   };
+
+  const addColor = e => {
+    e.preventDefault();
+    console.log("from addColor: ", newColor);
+
+    axiosWithAuth().post('/api/colors', newColor)
+    .then(res => {
+      axiosWithAuth().get('/api/colors')
+      .then(res => {
+        updateColors(res.data)
+      })
+      .catch(err => console.log('inner error', err))
+    })
+    .catch(err => {
+      console.log('outer error', err)
+    })
+  }
+
+  const handleNameChange = e => {
+    setNewColor({...newColor, [e.target.value]:e.target.value})
+  }
+
+  const handleHexChange = e => {
+    setNewColor({...newColor, code: {hex: e.target.value}})
+  }
+
+
+
 
   return (
     <div className="colors-wrap">
@@ -80,8 +137,22 @@ const ColorList = ({ colors, updateColors }) => {
           </div>
         </form>
       )}
-      <div className="spacer" />
-      {/* stretch - build another form here to add a color */}
+      <div className="addForm" />
+      <form onSubmit={addColor}>
+        <p>Create a Color!</p>
+        <input 
+          type='text'
+          name='color'
+          placeholder='Type Color Name'
+          onChange={handleNameChange} />
+        <input 
+          type='text'
+          name='hex'
+          placeholder="Enter hex code"
+          onChange={handleHexChange}/>
+        <input type='submit' />
+      </form>
+      
     </div>
   );
 };

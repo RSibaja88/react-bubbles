@@ -102,13 +102,13 @@ function authenticator(req, res, next) {
 
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body;
-  if (username === "Lambda School" && password === "i<3Lambd4") {
+  if (username === "show" && password === "page") {
     req.loggedIn = true;
     setTimeout(() => {
       res.status(200).json({
         payload: token
       });
-    }, 1000);
+    }, 3000);
   } else {
     res
       .status(403)

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axiosWithAuth from './axiosWithAuth';
-
+import "./Login.css";
 
 const Login = (props) => {
   const [ creds, setCreds ] = useState({username:'', password:''});
@@ -25,7 +25,7 @@ const Login = (props) => {
   }
 
   return (
-    <>
+    <div className="lBody">
       <h1>Welcome to the Bubble App!</h1>
         <div className="loginForm">
           <h1>Login to See Colors</h1>
@@ -44,7 +44,7 @@ const Login = (props) => {
           <input type="submit" />
         </form>
         </div>
-    </>
+    </div>
   );
 };
 

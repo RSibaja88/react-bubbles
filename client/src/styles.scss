@@ -8,12 +8,14 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
+
 }
 
 .App {
   font-family: "Montserrat", sans-serif;
   text-align: center;
   display: flex;
+  flex-direction: row;
 
   svg {
     height: 100%;

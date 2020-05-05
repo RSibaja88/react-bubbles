@@ -23,15 +23,19 @@ const ColorList = ({ colors, updateColors }) => {
     setEditing(true);
     setColorToEdit(color);
   };
+  
+  const getCall = () => {
+    axiosWithAuth().get('/api/colors')
+    .then(res => {
+      updateColors(res.data)
+    })
+  };
 
   const saveEdit = e => {
     e.preventDefault();
     axiosWithAuth().put(`/api/colors/${colorToEdit.id}`, colorToEdit)
     .then(res => {
-    axiosWithAuth().get('/api/colors')
-    .then(res => {
-      updateColors(res.data)
-    })
+    getCall()
     .catch(err => console.log('inner error', err))
     history.push('/bubble-page')
     })
@@ -44,10 +48,7 @@ const ColorList = ({ colors, updateColors }) => {
   const deleteColor = color => {
    axiosWithAuth().delete(`/api/colors/${color.id}`, color)
    .then(res => {
-     axiosWithAuth().get('/api/colors')
-     .then(res => {
-       updateColors(res.data)
-     })
+    getCall()
      .catch(err => console.log('inner error', err))
     history.push('/bubble-page')
    })
@@ -62,10 +63,7 @@ const ColorList = ({ colors, updateColors }) => {
 
     axiosWithAuth().post('/api/colors', newColor)
     .then(res => {
-      axiosWithAuth().get('/api/colors')
-      .then(res => {
-        updateColors(res.data)
-      })
+     getCall()
       .catch(err => console.log('inner error', err))
     })
     .catch(err => {
